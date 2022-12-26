@@ -106,7 +106,7 @@ static void convert_float(char *txt,
 
 	v = (v0 << 16) + val[1];
 
-	sprintf(txt, "%f", ieee754_to_float(v));
+	sprintf(txt, "%.1f", ieee754_to_float(v));
 }
 
 
