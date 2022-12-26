@@ -260,7 +260,7 @@ int publish_registers(modbus_t *ctx, struct fconf *conf)
 		if (!conf->publish[i])
 			break;
 
-		n = sscanf(conf->publish[i], "0x%02x %40s", &addr, topic);
+		n = sscanf(conf->publish[i], "0x%x %40s", &addr, topic);
 		if (n != 2) {
 			printf("ERR - could not parse publish%u \"%s\" \n",
 			       (uint8_t) i, conf->publish[i]);
