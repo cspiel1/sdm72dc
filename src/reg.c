@@ -204,7 +204,15 @@ static int print_register_priv(modbus_t *ctx, int addr,
 		if (reg->address != addr)
 			continue;
 
-		mret = modbus_read_registers(ctx, addr, 2, val);
+		if (reg->input) {
+			mret = modbus_read_input_registers(
+							   ctx, addr, 2, val);
+		}
+		else {
+			mret = modbus_read_registers(
+						     ctx, addr, 2, val);
+		}
+
 		if (ctx && mret == -1) {
 			perror("ERR - modbus read error\n");
 			err = EPROTO;
