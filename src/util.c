@@ -6,6 +6,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <sys/time.h>
+#include <time.h>
 #include <errno.h>
 #include <string.h>
 
@@ -58,4 +59,44 @@ uint64_t tmr_jiffies(void)
 	jfs += now.tv_usec / 1000;
 
 	return jfs;
+}
+
+
+/**
+ * Checks if current day is different from given day of month and current time
+ * is past given hours and minutes
+ *
+ * @param yesterday  Day of the month of yesterday
+ * @param hour       Hours
+ * @param minutes    Minutes
+ *
+ * @return True if time reached hours and minutes today
+ */
+bool check_time(int yesterday, int hour, int min)
+{
+    struct tm tm;
+    time_t now;
+    time(&now);
+
+    localtime_r(&now, &tm);
+    if (tm.tm_mday == yesterday)
+	    return false;
+
+    return (tm.tm_hour == hour && tm.tm_min >= min);
+}
+
+
+/**
+ * Returns today day in month
+ *
+ * @return Day in month
+ */
+int todays_mday(void)
+{
+    struct tm tm;
+    time_t now;
+    time(&now);
+
+    localtime_r(&now, &tm);
+    return tm.tm_mday;
 }

@@ -12,5 +12,7 @@ struct fconf;
 int print_all_registers(modbus_t *ctx);
 int print_register(modbus_t *ctx, int addr);
 int publish_registers(modbus_t *ctx, struct fconf *conf);
+int reset_energie(modbus_t *ctx);
+int check_reset(modbus_t *ctx, const struct fconf *conf);
 
 #endif

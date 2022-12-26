@@ -27,6 +27,8 @@ enum {
 };
 
 
+static int last_reset_day = -1;
+
 struct sdm_register {
 	uint16_t address;     /* modbus address                              */
 	const char *desc;     /* description                                 */
@@ -281,4 +283,60 @@ int publish_registers(modbus_t *ctx, struct fconf *conf)
 	}
 
 	return err;
+}
+
+
+int reset_energie(modbus_t *ctx)
+{
+	int mret;
+	uint16_t v = 0x0003;
+
+	mret = modbus_write_registers(ctx, 0xf010, 1, &v);
+	if (ctx && mret == -1) {
+		printf("ERR - modbus write error\n");
+		return EPROTO;
+	}
+
+	return 0;
+}
+
+
+int check_reset(modbus_t *ctx, const struct fconf *conf)
+{
+	FILE *f;
+	char fname[255];
+
+	if (last_reset_day == -1) {
+		char *line = NULL;
+		size_t len = 0, n = 0;
+		sprintf(fname, "%s/.config/.sdm72dc-ld", getenv("HOME"));
+		f = fopen(fname, "r");
+		if (f) {
+			n = getline(&line, &len, f);
+			if (n > 0)
+				last_reset_day = atoi(line);
+
+			fclose(f);
+		}
+
+		if (last_reset_day == -1)
+			last_reset_day = todays_mday();
+	}
+
+	/* reset total energy counter every day at 07:00 */
+	if (check_time(last_reset_day, conf->reset_hh, 0)) {
+		last_reset_day = todays_mday();
+		reset_energie(ctx);
+
+		/* make persistent */
+		sprintf(fname, "%s/.config/.sdm72dc-ld", getenv("HOME"));
+		f = fopen(fname, "w");
+		if (!f) {
+			printf("ERR - Could not write %s\n", fname);
+			return EIO;
+		}
+
+		fprintf(f, "%d", last_reset_day);
+		fclose(f);
+	}
 }

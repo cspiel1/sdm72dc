@@ -44,6 +44,7 @@ static void print_usage(const char *pname)
 		"\n"
 		"-D, --dev device\n"
 		"-i, --id slave\n"
+		"-r, --reset Reset total energie counter\n"
 		, pname);
 }
 
@@ -59,6 +60,7 @@ int main(int argc, char *argv[])
 	int slave = 0;
 	bool nomodbus = false;
 	int err;
+	bool reset = false;
 
 	memset(&conf, 0, sizeof(conf));
 	sprintf(fname, "%s/.config/sdm72dc", getenv("HOME"));
@@ -73,10 +75,11 @@ int main(int argc, char *argv[])
 			{"daemon",    0, 0, 'd'},
 			{"dev",       1, 0, 'D'},
 			{"id",        1, 0, 'i'},
+			{"reset",     0, 0, 'r'},
 			{0,           0, 0,   0}
 		};
 
-		c = getopt_long(argc, argv, "ndD:i:", long_options, NULL);
+		c = getopt_long(argc, argv, "ndD:i:r", long_options, NULL);
 		if (c == -1)
 			break;
 
@@ -88,6 +91,10 @@ int main(int argc, char *argv[])
 
 			case 'n':
 				nomodbus = true;
+				break;
+
+			case 'r':
+				reset = true;
 				break;
 
 			case 'i':
@@ -145,6 +152,9 @@ int main(int argc, char *argv[])
 			perror("modbus_set_slave error\n");
 			goto out;
 		}
+
+		if (reset)
+			(void)reset_energie(ctx);
 	}
 
 	(void)signal(SIGINT, signal_handler);
@@ -176,6 +186,8 @@ int main(int argc, char *argv[])
 					ms = tmr_jiffies() + 5000;
 
 				err = publish_registers(ctx, &conf);
+
+				check_reset(ctx, &conf);
 			}
 
 			if (err)

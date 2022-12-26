@@ -21,6 +21,7 @@ struct fconf {
 	char *capath;
 	char *cafile;
 	char *publish[10];
+	int reset_hh;
 };
 
 

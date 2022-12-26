@@ -21,6 +21,7 @@ capath     /etc/ssl/certs
 publish0   0x34 smartmeter/power/total
 publish1   0x0156 smartmeter/energie/total
 publish2   0x0180 smartmeter/energie/resetable
+reset_hh   7
 ```
 
 

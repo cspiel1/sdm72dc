@@ -146,9 +146,13 @@ struct confkey confkeys[] = {
 {"mqttpass", CONF_STR, FCONF_VIDX(mqttpass),           NULL,    0},
 {"capath",   CONF_STR, FCONF_VIDX(capath),          "/etc/ssl/certs",    0},
 {"cafile",   CONF_STR, FCONF_VIDX(cafile),             NULL,    0},
-{"publish0", CONF_STR, FCONF_VIDX(publish[0]),      "0x34 smartmeter/power/total",   0},
-{"publish1", CONF_STR, FCONF_VIDX(publish[1]),      "0x0156 smartmeter/energie/total",   0},
-{"publish2", CONF_STR, FCONF_VIDX(publish[2]),      "0x0180 smartmeter/energie/resetable",   0},
+{"publish0", CONF_STR, FCONF_VIDX(publish[0]),
+	"0x34 smartmeter/power/total",   0},
+{"publish1", CONF_STR, FCONF_VIDX(publish[1]),
+	"0x0156 smartmeter/energie/total",   0},
+{"publish2", CONF_STR, FCONF_VIDX(publish[2]),
+	"0x0180 smartmeter/energie/resetable",   0},
+{"reset_hh",  CONF_INT, FCONF_VIDX(reset_hh),            NULL,    7},
 
 };
 
